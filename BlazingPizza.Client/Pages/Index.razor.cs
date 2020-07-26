@@ -11,51 +11,19 @@ namespace BlazingPizza.Client.Pages
   {
     [Inject] HttpClient HttpClient { get; set; }
     [Inject] NavigationManager NavigationManager { get; set; }
+    [Inject] public OrderState OrderState { get; set; }
     protected List<PizzaSpecial> specials;
-    protected Pizza configuringPizza;
-    protected bool showingConfigureDialog;
-    protected Order order = new Order();
 
     protected override async Task OnInitializedAsync()
     {
       specials = await HttpClient.GetFromJsonAsync<List<PizzaSpecial>>("specials");
     }
 
-    protected void ShowConfigurePizzaDialog(PizzaSpecial special)
-    {
-      configuringPizza = new Pizza
-      {
-        Special = special,
-        SpecialId = special.Id,
-        Size = Pizza.DefaultSize,
-        Toppings = new List<PizzaTopping>()
-      };
-      showingConfigureDialog = true;
-    }
-
-    protected void CancelConfigurePizzaDialog()
-    {
-      configuringPizza = null;
-      showingConfigureDialog = false;
-    }
-
-    protected void ConfirmConfigurePizzaDialog()
-    {
-      order.Pizzas.Add(configuringPizza);
-      configuringPizza = null;
-      showingConfigureDialog = false;
-    }
-
-    protected void RemoveConfiguredPizza(Pizza pizza)
-    {
-      order.Pizzas.Remove(pizza);
-    }
-
     protected async Task PlaceOrder()
     {
-      var response = await HttpClient.PostAsJsonAsync("orders", order);
+      var response = await HttpClient.PostAsJsonAsync("orders", OrderState.Order);
       var newOrderId = await response.Content.ReadFromJsonAsync<int>();
-      order = new Order();
+      OrderState.ResetOrder();
       NavigationManager.NavigateTo($"myorders/{newOrderId}");
     }
   }
