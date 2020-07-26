@@ -1,3 +1,5 @@
+@inherits OrderReviewBase
+
 @foreach (var pizza in Order.Pizzas)
 {
     <p>
@@ -22,7 +24,3 @@
         £@Order.GetFormattedTotalPrice()
     </strong>
 </p>
-
-@code {
-    [Parameter] public Order Order { get; set; }
-}

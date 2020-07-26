@@ -1,4 +1,5 @@
 @inject HttpClient HttpClient
+@inherits ConfigurePizzaDialogBase
 
 <div class="dialog-container">
     <div class="dialog">
@@ -59,37 +60,3 @@
     </div>
 </div>
 
-
-@code {
-    List<Topping> toppings;
-    [Parameter] public Pizza Pizza { get; set; }
-    [Parameter] public EventCallback OnCancel { get; set; }
-    [Parameter] public EventCallback OnConfirm { get; set; }
-
-    protected async override Task OnInitializedAsync()
-    {
-      toppings = await HttpClient.GetFromJsonAsync<List<Topping>>("toppings");
-    }
-
-    void ToppingSelected(ChangeEventArgs e)
-    {
-      if (int.TryParse((string)e.Value, out var index) && index >= 0)
-      {
-        AddTopping(toppings[index]);
-      }
-    }
-
-    void AddTopping(Topping topping)
-    {
-      if (Pizza.Toppings.Find(pt => pt.Topping == topping) == null)
-      {
-        Pizza.Toppings.Add(new PizzaTopping { Topping = topping });
-      }
-    }
-
-    void RemoveTopping(Topping topping)
-    {
-      Pizza.Toppings.RemoveAll(pt => pt.Topping == topping);
-    }
-
-}

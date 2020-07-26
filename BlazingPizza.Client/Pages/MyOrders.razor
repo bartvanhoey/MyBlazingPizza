@@ -1,5 +1,5 @@
 @page "/myorders"
-
+@inherits MyOrdersBase
 @inject HttpClient HttpClient
 
 
@@ -39,14 +39,3 @@
         </div>
     }
 </div>
-
-@code {
-  IEnumerable<OrderWithStatus> ordersWithStatus;
-
-  protected async override Task OnParametersSetAsync()
-  {
-    ordersWithStatus = await HttpClient.GetFromJsonAsync<List<OrderWithStatus>>("orders");
-  }
-
-
-}
