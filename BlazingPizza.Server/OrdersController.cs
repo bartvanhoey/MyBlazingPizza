@@ -33,40 +33,59 @@ namespace BlazingPizza.Server
       return orders.Select(o => OrderWithStatus.FromOrder(o)).ToList();
     }
 
-       [HttpPost]
-        public async Task<ActionResult<int>> PlaceOrder(Order order)
+    [HttpGet("{orderId}")]
+    public async Task<ActionResult<OrderWithStatus>> GetOrderWithStatus(int orderId)
+    {
+      var order = await _db.Orders
+          .Where(o => o.OrderId == orderId)
+          // .Where(o => o.UserId == GetUserId())
+          .Include(o => o.DeliveryLocation)
+          .Include(o => o.Pizzas).ThenInclude(p => p.Special)
+          .Include(o => o.Pizzas).ThenInclude(p => p.Toppings).ThenInclude(t => t.Topping)
+          .SingleOrDefaultAsync();
+
+      if (order == null)
+      {
+        return NotFound();
+      }
+
+      return OrderWithStatus.FromOrder(order);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<int>> PlaceOrder(Order order)
+    {
+      order.CreatedTime = DateTime.Now;
+      order.DeliveryLocation = new LatLong(51.5001, -0.1239);
+      // order.UserId = GetUserId();
+
+      // Enforce existence of Pizza.SpecialId and Topping.ToppingId
+      // in the database - prevent the submitter from making up
+      // new specials and toppings
+      foreach (var pizza in order.Pizzas)
+      {
+        pizza.SpecialId = pizza.Special.Id;
+        pizza.Special = null;
+
+        foreach (var topping in pizza.Toppings)
         {
-            order.CreatedTime = DateTime.Now;
-            order.DeliveryLocation = new LatLong(51.5001, -0.1239);
-            // order.UserId = GetUserId();
-
-            // Enforce existence of Pizza.SpecialId and Topping.ToppingId
-            // in the database - prevent the submitter from making up
-            // new specials and toppings
-            foreach (var pizza in order.Pizzas)
-            {
-                pizza.SpecialId = pizza.Special.Id;
-                pizza.Special = null;
-
-                foreach (var topping in pizza.Toppings)
-                {
-                    topping.ToppingId = topping.Topping.Id;
-                    topping.Topping = null;
-                }
-            }
-
-            _db.Orders.Attach(order);
-            await _db.SaveChangesAsync();
-
-            // In the background, send push notifications if possible
-            // var subscription = await _db.NotificationSubscriptions.Where(e => e.UserId == GetUserId()).SingleOrDefaultAsync();
-            // if (subscription != null)
-            // {
-            //     _ = TrackAndSendNotificationsAsync(order, subscription);
-            // }
-
-            return order.OrderId;
+          topping.ToppingId = topping.Topping.Id;
+          topping.Topping = null;
         }
+      }
+
+      _db.Orders.Attach(order);
+      await _db.SaveChangesAsync();
+
+      // In the background, send push notifications if possible
+      // var subscription = await _db.NotificationSubscriptions.Where(e => e.UserId == GetUserId()).SingleOrDefaultAsync();
+      // if (subscription != null)
+      // {
+      //     _ = TrackAndSendNotificationsAsync(order, subscription);
+      // }
+
+      return order.OrderId;
+    }
 
   }
 }
