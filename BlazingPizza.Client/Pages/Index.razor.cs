@@ -18,13 +18,5 @@ namespace BlazingPizza.Client.Pages
     {
       specials = await HttpClient.GetFromJsonAsync<List<PizzaSpecial>>("specials");
     }
-
-    protected async Task PlaceOrder()
-    {
-      var response = await HttpClient.PostAsJsonAsync("orders", OrderState.Order);
-      var newOrderId = await response.Content.ReadFromJsonAsync<int>();
-      OrderState.ResetOrder();
-      NavigationManager.NavigateTo($"myorders/{newOrderId}");
-    }
   }
 }
