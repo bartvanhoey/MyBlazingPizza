@@ -1,5 +1,6 @@
 @page "/checkout"
 @inherits CheckoutBase
+@attribute [Authorize]
 
 <div class="main">
  <EditForm Model="OrderState.Order.DeliveryAddress" OnValidSubmit="PlaceOrderAsync">

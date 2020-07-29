@@ -1,6 +1,4 @@
 using System;
-using System.Net.Http;
-using System.Net.Http.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using BlazingPizza.Shared;
@@ -12,22 +10,23 @@ namespace BlazingPizza.Client.Pages
   public class OrderDetailsBase : ComponentBase, IDisposable
   {
     [Parameter] public int OrderId { get; set; }
-    [Inject] HttpClient HttpClient { get; set; }
+
+    [Inject] public OrdersClient OrdersClient { get; set; }
 
     protected OrderWithStatus orderWithStatus;
     protected bool invalidOrder;
     protected CancellationTokenSource pollingCancellationToken;
 
-    protected override void OnParametersSet()
+    protected async override Task OnParametersSetAsync()
     {
       // If we were already polling for a different order, stop doing so
       pollingCancellationToken?.Cancel();
 
       // Start a new poll loop
-      PollForUpdates();
+      await PollForUpdates();
     }
 
-    private async void PollForUpdates()
+    private async Task PollForUpdates()
     {
       pollingCancellationToken = new CancellationTokenSource();
       while (!pollingCancellationToken.IsCancellationRequested)
@@ -35,7 +34,7 @@ namespace BlazingPizza.Client.Pages
         try
         {
           invalidOrder = false;
-          orderWithStatus = await HttpClient.GetFromJsonAsync<OrderWithStatus>($"orders/{OrderId}");
+          orderWithStatus = await OrdersClient.GetOrderAsync(OrderId);
           StateHasChanged();
 
           if (orderWithStatus.IsDelivered)
