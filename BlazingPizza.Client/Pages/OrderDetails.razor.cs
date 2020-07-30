@@ -12,8 +12,7 @@ namespace BlazingPizza.Client.Pages
   public class OrderDetailsBase : ComponentBase, IDisposable
   {
     [Parameter] public int OrderId { get; set; }
-    [Inject] HttpClient HttpClient { get; set; }
-
+    [Inject] public OrdersClient OrdersClient { get; set; }
     protected OrderWithStatus orderWithStatus;
     protected bool invalidOrder;
     protected CancellationTokenSource pollingCancellationToken;
@@ -35,9 +34,8 @@ namespace BlazingPizza.Client.Pages
         try
         {
           invalidOrder = false;
-          orderWithStatus = await HttpClient.GetFromJsonAsync<OrderWithStatus>($"orders/{OrderId}");
+          orderWithStatus = await OrdersClient.GetOrderAsync(OrderId);
           StateHasChanged();
-
           if (orderWithStatus.IsDelivered)
           {
             pollingCancellationToken.Cancel();
