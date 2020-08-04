@@ -1,10 +1,11 @@
+using BlazingPizza.ComponentsLibrary.Map;
+using BlazingPizza.Shared;
 using System;
 using System.Collections.Generic;
-using BlazingPizza.ComponentsLibrary.Map;
 
-namespace BlazingPizza.Shared
+namespace BlazingPizza
 {
-     public class OrderWithStatus
+    public class OrderWithStatus
     {
         public readonly static TimeSpan PreparationDuration = TimeSpan.FromSeconds(10);
         public readonly static TimeSpan DeliveryDuration = TimeSpan.FromMinutes(1); // Unrealistic, but more interesting to watch
