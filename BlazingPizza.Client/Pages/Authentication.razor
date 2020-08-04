@@ -1,4 +1,7 @@
 @page "/authentication/{Action}"
 @inherits AuthenticationBase
 
-<RemoteAuthenticatorView Action="@Action" />
+<RemoteAuthenticatorViewCore 
+      TAuthenticationState="PizzaAuthenticationState" 
+      AuthenticationState="RemoteAuthenticationState" 
+      OnLogInSucceeded="RestorePizza" Action="@Action" />
