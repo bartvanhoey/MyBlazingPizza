@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazingPizza.Shared", "Blaz
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazingPizza.ComponentsLibrary", "BlazingPizza.ComponentsLibrary\BlazingPizza.ComponentsLibrary.csproj", "{3525AD55-0DD5-4610-83AC-4EBC9955B504}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazingPizza.BlazingComponents", "BlazingPizza.BlazingComponents\BlazingPizza.BlazingComponents.csproj", "{1B0B5984-0655-4B64-B3DF-D1C269D38162}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,5 +74,17 @@ Global
 		{3525AD55-0DD5-4610-83AC-4EBC9955B504}.Release|x64.Build.0 = Release|Any CPU
 		{3525AD55-0DD5-4610-83AC-4EBC9955B504}.Release|x86.ActiveCfg = Release|Any CPU
 		{3525AD55-0DD5-4610-83AC-4EBC9955B504}.Release|x86.Build.0 = Release|Any CPU
+		{1B0B5984-0655-4B64-B3DF-D1C269D38162}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B0B5984-0655-4B64-B3DF-D1C269D38162}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B0B5984-0655-4B64-B3DF-D1C269D38162}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1B0B5984-0655-4B64-B3DF-D1C269D38162}.Debug|x64.Build.0 = Debug|Any CPU
+		{1B0B5984-0655-4B64-B3DF-D1C269D38162}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1B0B5984-0655-4B64-B3DF-D1C269D38162}.Debug|x86.Build.0 = Debug|Any CPU
+		{1B0B5984-0655-4B64-B3DF-D1C269D38162}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B0B5984-0655-4B64-B3DF-D1C269D38162}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B0B5984-0655-4B64-B3DF-D1C269D38162}.Release|x64.ActiveCfg = Release|Any CPU
+		{1B0B5984-0655-4B64-B3DF-D1C269D38162}.Release|x64.Build.0 = Release|Any CPU
+		{1B0B5984-0655-4B64-B3DF-D1C269D38162}.Release|x86.ActiveCfg = Release|Any CPU
+		{1B0B5984-0655-4B64-B3DF-D1C269D38162}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

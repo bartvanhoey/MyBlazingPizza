@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using BlazingPizza.Shared;
 using Microsoft.AspNetCore.Components;
@@ -13,16 +14,34 @@ namespace BlazingPizza.Client.Pages
 
     protected IEnumerable<OrderWithStatus> ordersWithStatus;
 
-    protected override async Task OnParametersSetAsync()
+    // protected override async Task OnParametersSetAsync()
+    // {
+    //   try
+    //   {
+    //     ordersWithStatus = await OrdersClient.GetOrdersAsync();
+    //   }
+    //   catch (AccessTokenNotAvailableException ex)
+    //   {
+    //     ex.Redirect();
+    //   }
+    // }
+
+    protected async Task<IEnumerable<OrderWithStatus>> LoadOrdersAsync()
     {
+      var ordersWithStatus = Enumerable.Empty<OrderWithStatus>();
+
       try
       {
-          ordersWithStatus = await OrdersClient.GetOrdersAsync();
+        ordersWithStatus = await OrdersClient.GetOrdersAsync();
+
       }
       catch (AccessTokenNotAvailableException ex)
       {
-          ex.Redirect();
+        ex.Redirect();
       }
+
+      return ordersWithStatus;
+
     }
 
   }
