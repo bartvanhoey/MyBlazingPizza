@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Json;
 using System.Threading.Tasks;
 using BlazingPizza.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WebPush;
 
 namespace BlazingPizza.Server
 {
@@ -80,19 +82,54 @@ namespace BlazingPizza.Server
       await _db.SaveChangesAsync();
 
       // In the background, send push notifications if possible
-      // var subscription = await _db.NotificationSubscriptions.Where(e => e.UserId == GetUserId()).SingleOrDefaultAsync();
-      // if (subscription != null)
-      // {
-      //     _ = TrackAndSendNotificationsAsync(order, subscription);
-      // }
+      var subscription = await _db.NotificationSubscriptions.Where(e => e.UserId == GetUserId()).SingleOrDefaultAsync();
+      if (subscription != null)
+      {
+        _ = TrackAndSendNotificationsAsync(order, subscription);
+      }
 
       return order.OrderId;
     }
 
-       private string GetUserId()
+    private static async Task TrackAndSendNotificationsAsync(Order order, NotificationSubscription subscription)
+    {
+      await Task.Delay(OrderWithStatus.PreparationDuration);
+      await SendNotificationsAsync(order, subscription, "Your order has been dispatched");
+
+      await Task.Delay(OrderWithStatus.DeliveryDuration);
+      await SendNotificationsAsync(order,
+                                   subscription,
+                                   "Your order is now delivered. Enjoy!");
+    }
+
+    private static async Task SendNotificationsAsync(Order order, NotificationSubscription subscription, string message)
+    {
+      // For a real application, generate your own
+      var publicKey = "BLC8GOevpcpjQiLkO7JmVClQjycvTCYWm6Cq_a7wJZlstGTVZvwGFFHMYfXt6Njyvgx_GlXJeo5cSiZ1y4JOx1o";
+      var privateKey = "OrubzSz3yWACscZXjFQrrtDwCKg-TGFuWhluQ2wLXDo";
+
+      var pushSubscription = new PushSubscription(subscription.Url, subscription.P256dh, subscription.Auth);
+      var vapidDetails = new VapidDetails("mailto:<someone@example.com>", publicKey, privateKey);
+      var webPushClient = new WebPushClient();
+      try
+      {
+        var payload = JsonSerializer.Serialize(new
         {
-            return HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-        }
+          message,
+          url = $"myorders/{order.OrderId}",
+        });
+        await webPushClient.SendNotificationAsync(pushSubscription, payload, vapidDetails);
+      }
+      catch (Exception ex)
+      {
+        Console.Error.WriteLine("Error sending push notification: " + ex.Message);
+      }
+    }
+
+    private string GetUserId()
+    {
+      return HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+    }
 
   }
 }
